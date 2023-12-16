@@ -60,18 +60,6 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
           cent    centroides, una matriz de tamanno ngrupos x NDIM, por referencia
  Salida:  valor del CVI (double): calidad/bondad de la particion de clusters
 ****************************************************************************************/
-double distancia_media(float mat[][NDIM]){
-	double sumaDistancias = 0;
-	int elemenosSumados = 0;
-	for(int i= 0; i< nvecg-1;i++){
-		for (int j = i+1; j<NDIM;j++){
-			sumaDistancias+=gendist(mat[i],mat[j]);
-			elementosSumados++;
-		}
-	}
-	return sumaDistancias/elemenosSumados;
-} 
- 
 
 double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float cent[][NDIM],
 		double a[]){
@@ -136,7 +124,35 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 	// Realizar el analisis de campos UNESCO en los grupos:
 	//    mediana maxima y el grupo en el que se da este maximo (para cada campo)
 	//    mediana minima y su grupo en el que se da este minimo (para cada campo)
+
+	for(int i=0;i<NCAM;i++){
+		info_cam[i].mmax=-1;
+		info_cam[i].mmin=2;
+		info_cam[i].gmax=0;
+		info_cam[i].gmin=0;
+
+		for(int j = 0;j<ngrupos;j++){
+			double* datos = (double*) malloc(listag[j].nvecg * sizeof(double));
+
+			for(int k=0; k<listag[j].nvecg;k++){
+				datos[k]=mcam[k][i];
+			} 
+			ordenar_vector(datos);
+			int index = sizeof(datos)/2;
+			double mediana = datos[index];
+			if(mediana>info_cam[i].mmax){
+				info_cam[i].mmax = mediana;
+				info_cam[i].gmax = j;
+			}
+			else if(mediana<info_cam[i].mmin){
+				info_cam[i].mmin= mediana;
+				info_cam[i].gmin= j;
+			}
+			free(datos);
+		}
+	}
 }
+
 
 /********************************************************************************************
  4 - Funcion para relizar el analisis de campos UNESCO
