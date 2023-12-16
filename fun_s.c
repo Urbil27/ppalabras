@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include "defineg.h" // definiciones
 
+//Prueba
+
 /*******************************************************************
  1 - Funcion para calcular la distancia euclidea entre dos vectores
  Entrada: 2 elementos con NDIM caracteristicas (por referencia)
