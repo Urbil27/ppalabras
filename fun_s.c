@@ -162,13 +162,7 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
            mcam     campos, una matriz de tamaño MAXV x NCAM, por referencia
  Salida:   info_cam vector de NCAM structs (informacion del analisis realizado), por ref.
 *****************************************************************************************/
-void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
-		struct analisis *info_cam){
-	// PARA COMPLETAR
-	// Realizar el analisis de campos UNESCO en los grupos:
-	//    mediana maxima y el grupo en el que se da este maximo (para cada campo)
-	//    mediana minima y su grupo en el que se da este minimo (para cada campo)
-}
+
 
 /*************************************
    OTRAS FUNCIONES DE LA APLICACION
