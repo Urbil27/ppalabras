@@ -19,7 +19,7 @@ double gendist (float *vec1, float *vec2){
 	// calcular la distancia euclidea entre dos vectores 
 	double distancia = 0.0;
 	for(int i =0;i<NDIM;i++){
-		distancia += (vec1[i]-vec2[i])^2;
+		distancia += pow((vec1[i]-vec2[i]),2);
 	}
 	return sqrt(distancia);
 }
@@ -40,7 +40,7 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 		double distanciaMinima=0;
 		int grupoCercano =-1;
 		for(int j=0;j<ngrupos;j++){
-			double distanciaActual = gendist(nvec[i],cent[j]);
+			double distanciaActual = gendist(mvec[i],cent[j]);
 			if(distanciaMinima>distanciaActual||primero){
 				distanciaMinima = distanciaActual;
 				grupoCercano=j;
