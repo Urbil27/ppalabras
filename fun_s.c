@@ -47,7 +47,7 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 				primero = 0;
 			}
 		}
-		popul[i]=grupo_cercano;
+		popul[i]=grupoCercano;
 	}
 }
 
