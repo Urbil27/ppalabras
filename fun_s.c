@@ -4,6 +4,7 @@
  rutinas que se utilizan en el modulo grupopal_s.c
 ****************************************************/
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include "defineg.h" // definiciones
 
@@ -36,9 +37,9 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 	// PARA COMPLETAR
 	// popul: grupo mas cercano a cada elemento
 	_Bool primero = 1;
-	for(int i =0;i<nvec;i++){
+	for(int i=0;i<nvec;i++){
 		double distanciaMinima=0;
-		int grupoCercano =-1;
+		int grupoCercano;
 		for(int j=0;j<ngrupos;j++){
 			double distanciaActual = gendist(mvec[i],cent[j]);
 			if(distanciaMinima>distanciaActual||primero){
@@ -47,7 +48,7 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 				primero = 0;
 			}
 		}
-		popul[i]=grupo_cercano;
+		popul[i]=grupoCercano;
 	}
 }
 
@@ -143,7 +144,7 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 	// Realizar el analisis de campos UNESCO en los grupos:
 	//    mediana maxima y el grupo en el que se da este maximo (para cada campo)
 	//    mediana minima y su grupo en el que se da este minimo (para cada campo)
-
+	double* datos;
 	for(int i=0;i<NCAM;i++){
 		info_cam[i].mmax=-1;
 		info_cam[i].mmin=2;
@@ -151,8 +152,8 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 		info_cam[i].gmin=0;
 
 		for(int j = 0;j<ngrupos;j++){
-			double* datos = (double*) malloc(listag[j].nvecg * sizeof(double));
-
+			printf("malloc \n");
+			datos = malloc(listag[j].nvecg * sizeof(double));
 			for(int k=0; k<listag[j].nvecg;k++){
 				datos[k]=mcam[k][i];
 			} 
@@ -167,9 +168,12 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 				info_cam[i].mmin= mediana;
 				info_cam[i].gmin= j;
 			}
+			printf("free1 \n");
 			free(datos);
+			printf("free2 \n");
 		}
 	}
+	
 }
 
 
