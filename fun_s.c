@@ -36,7 +36,6 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 		int *popul){
 	// PARA COMPLETAR
 	// popul: grupo mas cercano a cada elemento
-	
 	for(int i=0;i<nvec;i++){
 		_Bool primero = 1;
 		double distanciaMinima=0.0;
@@ -118,10 +117,10 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 
 
 //Algoritmo que ordena un vector en orden ascendente por inserción
-void ordenar_vector(double *vector){
+void ordenar_vector(double *vector,int tamanio){
 	int pos;
 	int aux;
-	for(int i=1;i<sizeof(vector);i++){
+	for(int i=1;i<tamanio;i++){
 		pos=i;
 		aux=vector[i];
 
@@ -154,14 +153,15 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 
 		for(int j = 0;j<ngrupos;j++){
 			if(listag[j].nvecg>0){
+				int tamanio=listag[j].nvecg;
 				printf("malloc1 \n");
-				datos = malloc(listag[j].nvecg * sizeof(double));
+				datos = malloc(tamanio * sizeof(double));
 				printf("malloc2 \n");
 				for(int k=0; k<listag[j].nvecg;k++){
 					datos[k]=mcam[k][i];
 				} 
-				ordenar_vector(datos);
-				int index = sizeof(datos)/2;
+				ordenar_vector(datos,tamanio);
+				int index = tamanio/2;
 				double mediana = datos[index];
 				if(mediana>info_cam[i].mmax){
 					info_cam[i].mmax = mediana;
