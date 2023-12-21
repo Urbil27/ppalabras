@@ -4,6 +4,7 @@
  rutinas que se utilizan en el modulo grupopal_s.c
 ****************************************************/
 #include <math.h>
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "defineg.h" // definiciones
@@ -37,15 +38,15 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 	// PARA COMPLETAR
 	// popul: grupo mas cercano a cada elemento
 	for(int i=0;i<nvec;i++){
-		_Bool primero = 1;
-		double distanciaMinima=0.0;
+		//_Bool primero = 1;
+		double distanciaMinima=DBL_MAX;
 		int grupoCercano;
 		for(int j=0;j<ngrupos;j++){
 			double distanciaActual = gendist(mvec[i],cent[j]);
-			if(distanciaMinima>distanciaActual||primero){
+			if(distanciaMinima>distanciaActual){
 				distanciaMinima = distanciaActual;
 				grupoCercano=j;
-				primero = 0;
+				//primero = 0;
 			}
 		}
 		popul[i]=grupoCercano;
@@ -69,6 +70,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		double b[ngrupos];
 		double s[ngrupos];
 		double CVI=0.0;
+		/*
 		//Distancia intra-cluster
 		for(int i=0;i<ngrupos;i++){
 			a[i]=0.0;
@@ -77,6 +79,21 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			}
 			a[i]=a[i]/listag[i].nvecg;
 		}
+		*/
+		for(int i=0;i<ngrupos;i++){
+			double distancia=0.0;
+			int total=0;
+			for(int j=0;j<listag[i].nvecg-1;j++){
+				for(int k=j+1;k<listag[i].nvecg;k++){
+					distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
+					total++;
+				}
+			}
+			printf("Distancia %d \n",distancia);
+			printf("Total %d \n",total);
+			a[i] = distancia/total;
+		}
+
 
 		//Distancia inter-cluster
 		for(int i=0;i<ngrupos-1;i++){
@@ -154,9 +171,7 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 		for(int j = 0;j<ngrupos;j++){
 			if(listag[j].nvecg>0){
 				int tamanio=listag[j].nvecg;
-				printf("malloc1 \n");
 				datos = malloc(tamanio * sizeof(double));
-				printf("malloc2 \n");
 				for(int k=0; k<listag[j].nvecg;k++){
 					datos[k]=mcam[k][i];
 				} 
@@ -171,9 +186,8 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 					info_cam[i].mmin= mediana;
 					info_cam[i].gmin= j;
 				}
-				printf("free1 \n");
 				free(datos);
-				printf("free2 \n");
+
 			}
 		}
 	}
