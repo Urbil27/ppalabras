@@ -91,18 +91,18 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 					}
 				}
 				a[i]=distancia/listag[i].nvecg;
-				printf("a[i]=  %d \n", a[i]);
+				printf("a[i]=  %f \n", a[i]);
 				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
 			}
 			else if(listag[i].nvecg == 1){
 				a[i]=listag[i].vecg[0];
-				printf("a[i]=  %d \n", a[i]);
+				printf("a[i]=  %f \n", a[i]);
 				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
 
 			}
 			else if(listag[i].nvecg == 0){
 				a[i] = 0.0;
-				printf("a[i]=  %d \n", a[i]);
+				printf("a[i]=  %f \n", a[i]);
 				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
 
 			}
