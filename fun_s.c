@@ -154,6 +154,7 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 		for(int j = 0;j<ngrupos;j++){
 			printf("malloc \n");
 			datos = malloc(listag[j].nvecg * sizeof(double));
+			printf("valor de listag= %d\n",listag[j].nvecg);
 			for(int k=0; k<listag[j].nvecg;k++){
 				datos[k]=mcam[k][i];
 			} 
