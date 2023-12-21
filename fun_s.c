@@ -36,9 +36,10 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 		int *popul){
 	// PARA COMPLETAR
 	// popul: grupo mas cercano a cada elemento
-	_Bool primero = 1;
+	
 	for(int i=0;i<nvec;i++){
-		double distanciaMinima=0;
+		_Bool primero = 1;
+		double distanciaMinima=0.0;
 		int grupoCercano;
 		for(int j=0;j<ngrupos;j++){
 			double distanciaActual = gendist(mvec[i],cent[j]);
@@ -153,7 +154,9 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 
 		for(int j = 0;j<ngrupos;j++){
 			if(listag[j].nvecg>0){
+				printf("malloc1 \n");
 				datos = malloc(listag[j].nvecg * sizeof(double));
+				printf("malloc2 \n");
 				for(int k=0; k<listag[j].nvecg;k++){
 					datos[k]=mcam[k][i];
 				} 
@@ -168,7 +171,9 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 					info_cam[i].mmin= mediana;
 					info_cam[i].gmin= j;
 				}
+				printf("free1 \n");
 				free(datos);
+				printf("free2 \n");
 			}
 		}
 	}
