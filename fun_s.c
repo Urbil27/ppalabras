@@ -82,16 +82,34 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		*/
 		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
-			int total=0;
-			for(int j=0;j<listag[i].nvecg-1;j++){
-				for(int k=j+1;k<listag[i].nvecg;k++){
-					distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
-					total++;
+			int total= listag[i].nvecg;
+			if(listag[i].nvecg>1){
+				for(int j=0;j<listag[i].nvecg-1;j++){
+					for(int k=j+1;k<listag[i].nvecg;k++){
+						distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
+						//total++;
+					}
 				}
+				a[i]=distancia/listag[i].nvecg;
+				printf("a[i]=  %d \n", a[i]);
+				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
 			}
-			printf("Distancia %d \n",distancia);
-			printf("Total %d \n",total);
-			a[i] = distancia/total;
+			else if(listag[i].nvecg == 1){
+				a[i]=listag[i].vecg[0];
+				printf("a[i]=  %d \n", a[i]);
+				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
+
+			}
+			else if(listag[i].nvecg == 0){
+				a[i] = 0.0;
+				printf("a[i]=  %d \n", a[i]);
+				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
+
+			}
+			
+			//printf("Distancia %d \n",distancia);
+			//printf("Total %d \n",total);
+			
 		}
 
 
@@ -187,7 +205,6 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 					info_cam[i].gmin= j;
 				}
 				free(datos);
-
 			}
 		}
 	}
