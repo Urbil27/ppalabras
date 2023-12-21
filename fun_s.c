@@ -80,6 +80,8 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			a[i]=a[i]/listag[i].nvecg;
 		}
 		*/
+
+		//Distancia intra-cluster
 		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int total= listag[i].nvecg;
@@ -91,35 +93,27 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 					}
 				}
 				a[i]=distancia/listag[i].nvecg;
-				printf("a[i]=  %f \n", a[i]);
-				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
 			}
 			else if(listag[i].nvecg == 1){
 				a[i]=listag[i].vecg[0];
-				printf("a[i]=  %f \n", a[i]);
-				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
-
 			}
 			else if(listag[i].nvecg == 0){
 				a[i] = 0.0;
-				printf("a[i]=  %f \n", a[i]);
-				printf("listag[i].nvecg=  %d \n", listag[i].nvecg);
-
-			}
-			
-			//printf("Distancia %d \n",distancia);
-			//printf("Total %d \n",total);
-			
+			}	
 		}
 
 
 		//Distancia inter-cluster
 		for(int i=0;i<ngrupos-1;i++){
-			b[i]=0.0;
-			for(int j=i+1;j<ngrupos;j++){
-				b[i] += gendist(cent[i],cent[j]);
+			double distancia=0.0;
+			for(int j=0;j<i;j++){
+				distancia += gendist(cent[i],cent[j]);
 			}
-			b[i] = b[i]/((ngrupos*(ngrupos-1))/2);
+			for(int k=i+1;k<ngrupos;k++){
+				distancia += gendist(cent[i],cent[k]);
+			}
+			b[i] = distancia/(ngrupos-1);
+			printf("b[%d] = %f \n", i, b[i]);
 		}
 
 		for(int i=0;i<ngrupos;i++){

@@ -110,6 +110,7 @@ int main (int argc, char *argv[]) {
 		}
 		
 		// silhouette: calidad de la particion de clusters
+		printf("llamada \n");
 		sil = silhouette_simple(mvec, listag, cent, a);
 
 		// calcular la diferencia: medida de la estabilidad
