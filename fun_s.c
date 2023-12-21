@@ -152,29 +152,26 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 		info_cam[i].gmin=0;
 
 		for(int j = 0;j<ngrupos;j++){
-			printf("malloc \n");
-			datos = malloc(listag[j].nvecg * sizeof(double));
-			printf("valor de listag= %d\n",listag[j].nvecg);
-			for(int k=0; k<listag[j].nvecg;k++){
-				datos[k]=mcam[k][i];
-			} 
-			ordenar_vector(datos);
-			int index = sizeof(datos)/2;
-			double mediana = datos[index];
-			if(mediana>info_cam[i].mmax){
-				info_cam[i].mmax = mediana;
-				info_cam[i].gmax = j;
+			if(listag[j].nvecg>0){
+				datos = malloc(listag[j].nvecg * sizeof(double));
+				for(int k=0; k<listag[j].nvecg;k++){
+					datos[k]=mcam[k][i];
+				} 
+				ordenar_vector(datos);
+				int index = sizeof(datos)/2;
+				double mediana = datos[index];
+				if(mediana>info_cam[i].mmax){
+					info_cam[i].mmax = mediana;
+					info_cam[i].gmax = j;
+				}
+				else if(mediana<info_cam[i].mmin){
+					info_cam[i].mmin= mediana;
+					info_cam[i].gmin= j;
+				}
+				free(datos);
 			}
-			else if(mediana<info_cam[i].mmin){
-				info_cam[i].mmin= mediana;
-				info_cam[i].gmin= j;
-			}
-			printf("free1 \n");
-			free(datos);
-			printf("free2 \n");
 		}
 	}
-	
 }
 
 
