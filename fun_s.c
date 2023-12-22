@@ -113,7 +113,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 				}
 			}
 			b[i] = distancia/cont;
-			printf("b[%d] = %f \n", i, b[i]);
+			//printf("b[%d] = %f \n", i, b[i]);
 		}
 
 
@@ -159,7 +159,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
     // ...
 }
 
-
+/*
 //Algoritmo que ordena un vector en orden ascendente por inserción
 void ordenar_vector(double *vector,int tamanio){
 	int pos;
@@ -174,6 +174,20 @@ void ordenar_vector(double *vector,int tamanio){
 		}
 		vector[pos]=aux;
 	}
+}
+*/
+//Algoritmo que ordena un vector
+void ordenar_vector(double vector[], int tamanio) {
+    for(int i = 0; i < tamanio-1; i++) {
+        for(int j = 0; j < tamanio-i-1; j++) {
+            if(vector[j] > vector[j+1]) {
+                // Intercambiar arr[j] y arr[j+1]
+                double temp = vector[j];
+                vector[j] = vector[j+1];
+                vector[j+1] = temp;
+            }
+        }
+    }
 }
 
 /********************************************************************************************
@@ -199,10 +213,18 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 			if(listag[j].nvecg>0){
 				int tamanio=listag[j].nvecg;
 				datos = malloc(tamanio * sizeof(double));
-				for(int k=0; k<listag[j].nvecg;k++){
+				for(int k=0; k<tamanio;k++){
 					datos[k]=mcam[k][i];
 				} 
+				printf("Sin ordenar: \n");
+				for(int i = 0; i < tamanio; i++) {
+        			printf("Datos[%d]= %f\n", i, datos[i]);
+   				 }
 				ordenar_vector(datos,tamanio);
+				printf("Ordenado: \n");
+				for(int i = 0; i < tamanio; i++) {
+       				 printf("Datos[%d]= %f\n", i, datos[i]);
+   				 }
 				int index = tamanio/2;
 				double mediana = datos[index];
 				if(mediana>info_cam[i].mmax){
