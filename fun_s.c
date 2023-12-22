@@ -159,11 +159,11 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
     // ...
 }
 
-/*
-//Algoritmo que ordena un vector en orden ascendente por inserción
+
+//Algoritmo que ordena un vector por inserción
 void ordenar_vector(double *vector,int tamanio){
 	int pos;
-	int aux;
+	double aux;
 	for(int i=1;i<tamanio;i++){
 		pos=i;
 		aux=vector[i];
@@ -175,7 +175,9 @@ void ordenar_vector(double *vector,int tamanio){
 		vector[pos]=aux;
 	}
 }
-*/
+
+
+/*
 //Algoritmo que ordena un vector
 void ordenar_vector(double vector[], int tamanio) {
     for(int i = 0; i < tamanio-1; i++) {
@@ -189,7 +191,7 @@ void ordenar_vector(double vector[], int tamanio) {
         }
     }
 }
-
+*/
 /********************************************************************************************
  4 - Funcion para relizar el analisis de campos UNESCO
  Entrada:  listag   vector de ngrupos structs (informacion de grupos generados), por ref.
