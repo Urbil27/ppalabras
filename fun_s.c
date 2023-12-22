@@ -21,6 +21,7 @@ double gendist (float *vec1, float *vec2){
 	// calcular la distancia euclidea entre dos vectores 
 	double distancia = 0.0;
 	for(int i =0;i<NDIM;i++){
+		//distancia += pow((vec1[i]-vec2[i]),2);
 		distancia += pow((vec1[i]-vec2[i]),2);
 	}
 	return sqrt(distancia);
@@ -84,12 +85,10 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		//Distancia intra-cluster
 		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
-			int total= listag[i].nvecg;
 			if(listag[i].nvecg>1){
 				for(int j=0;j<listag[i].nvecg-1;j++){
 					for(int k=j+1;k<listag[i].nvecg;k++){
 						distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
-						//total++;
 					}
 				}
 				a[i]=distancia/listag[i].nvecg;
@@ -104,7 +103,23 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 
 
 		//Distancia inter-cluster
-		for(int i=0;i<ngrupos-1;i++){
+		for(int i=0;i<ngrupos;i++){
+			double distancia=0.0;
+			int cont=0;
+			for(int j=0;j<ngrupos;j++){
+				if(i != j){
+					distancia = gendist(cent[i],cent[j]);
+					cont++;
+				}
+			}
+			b[i] = distancia/cont;
+			printf("b[%d] = %f \n", i, b[i]);
+		}
+
+
+
+		/*
+		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			for(int j=0;j<i;j++){
 				distancia += gendist(cent[i],cent[j]);
@@ -112,10 +127,10 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			for(int k=i+1;k<ngrupos;k++){
 				distancia += gendist(cent[i],cent[k]);
 			}
-			b[i] = distancia/(ngrupos-1);
+			b[i] = distancia/ngrupos;
 			printf("b[%d] = %f \n", i, b[i]);
 		}
-
+		*/
 		for(int i=0;i<ngrupos;i++){
 			s[i]=(b[i]-a[i])/(fmax(a[i],b[i]));
 		}
@@ -263,6 +278,7 @@ int nuevos_centroides(float mvec[][NDIM], float cent[][NDIM], int popul[], int n
 			for (j=0; j<NDIM; j++)
 				cent[i][j] = newcent[i][j];
 		}
+
 	}
 	return fin;
 }
