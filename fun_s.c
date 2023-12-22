@@ -91,12 +91,9 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 						distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
 					}
 				}
-				a[i]=distancia/listag[i].nvecg;
+				a[i]=distancia/(listag[i].nvecg*(listag[i].nvecg-1)/2);
 			}
-			else if(listag[i].nvecg == 1){
-				a[i]=listag[i].vecg[0];
-			}
-			else if(listag[i].nvecg == 0){
+			else{
 				a[i] = 0.0;
 			}	
 		}
@@ -218,7 +215,7 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 				for(int k=0; k<tamanio;k++){
 					datos[k]=mcam[k][i];
 				} 
-				printf("Sin ordenar: \n");
+				/*printf("Sin ordenar: \n");
 				for(int i = 0; i < tamanio; i++) {
         			printf("Datos[%d]= %f\n", i, datos[i]);
    				 }
@@ -226,7 +223,7 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 				printf("Ordenado: \n");
 				for(int i = 0; i < tamanio; i++) {
        				 printf("Datos[%d]= %f\n", i, datos[i]);
-   				 }
+   				 }*/
 				int index = tamanio/2;
 				double mediana = datos[index];
 				if(mediana>info_cam[i].mmax){
