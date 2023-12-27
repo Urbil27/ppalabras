@@ -40,7 +40,7 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 	// PARA COMPLETAR
 	// popul: grupo mas cercano a cada elemento
 	int i, j;
-	#pragma omp parallel for private(i,j) schedule(static, 4)
+	#pragma omp parallel for private(i,j) schedule(runtime)
 	for( i=0;i<nvec;i++){
 		//_Bool primero = 1;
 		double distanciaMinima=DBL_MAX;
@@ -73,11 +73,11 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		float a[]){
 		double b[ngrupos];
 		double s[ngrupos];
-		double CVI=0.0;
+		double CVI=0.0, distancia;
 		int i, j, k;
 
 		//Distancia intra-cluster
-		#pragma omp parallel for private(i,j, k) schedule(static)
+		#pragma omp parallel for private(i,j, k) schedule(runtime) reduction(+: distancia)
 		for(i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int tamanio=listag[i].nvecg;
@@ -98,9 +98,10 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		//	printf("a[%d] = %f \n", i, a[i]);
 		}
 		//Distancia inter-cluster
-		#pragma omp parallel for private(i,j) schedule(static)
+		
+		#pragma omp parallel for private(i,j) schedule(runtime) reduction(+: distancia)
 		for(int i=0;i<ngrupos;i++){
-			double distancia=0.0;
+			distancia=0.0;
 			int cont=0;
 			for(int j=0;j<ngrupos;j++){
 				if(i != j){
@@ -111,12 +112,12 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			b[i] = distancia/cont;
 			//printf("b[%d] = %f \n", i, b[i]);
 		}
-		#pragma omp parallel for private(i) schedule(static)
+		#pragma omp parallel for private(i) schedule(runtime)
 		for(int i=0;i<ngrupos;i++){
 			s[i]=(b[i]-a[i])/(fmax(a[i],b[i]));
 			//printf("s[%d] = %f \n", i, s[i]);
 		}
-		#pragma omp parallel for private(i) schedule(static)
+		#pragma omp parallel for private(i) schedule(runtime)
 		for(int i=0;i<ngrupos;i++){
 			#pragma omp critical
 			{
@@ -125,31 +126,15 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		}
 		printf("CVI/ngrupos: %f \n", CVI/ngrupos);
 		return CVI/ngrupos;
-    //float b[ngrupos];
-
-    // PARA COMPLETAR
-
-    // aproximar a[i] de cada cluster: calcular la densidad de los grupos;
-    //		media de las distancia entre todos los elementos del grupo;
-    //   	si el numero de elementos del grupo es 0 o 1, densidad = 0
-    // ...
-	
-    // aproximar b[i] de cada cluster
-    // ...
-
-    // calcular el ratio s[i] de cada cluster
-    // ...
-
-    // promedio y devolver
-    // ...
 }
 
 
 //Algoritmo que ordena un vector por inserción
 void ordenar_vector(double *vector,int tamanio){
-	int pos;
+	int pos, i;
 	double aux;
-	for(int i=1;i<tamanio;i++){
+	#pragma omp parallel for private(i) schedule(runtime)
+	for(i=1;i<tamanio;i++){
 		pos=i;
 		aux=vector[i];
 
@@ -190,17 +175,18 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 	//    mediana maxima y el grupo en el que se da este maximo (para cada campo)
 	//    mediana minima y su grupo en el que se da este minimo (para cada campo)
 	double* datos;
-	for(int i=0;i<NCAM;i++){
+	int i,j,k;
+	#pragma omp parallel for private(i,j,k, datos) schedule(static)
+	for(i=0;i<NCAM;i++){
 		info_cam[i].mmax=-1;
 		info_cam[i].mmin=2;
 		info_cam[i].gmax=0;
 		info_cam[i].gmin=0;
-
-		for(int j = 0;j<ngrupos;j++){
+		for(j = 0;j<ngrupos;j++){
 			if(listag[j].nvecg>0){
 				int tamanio=listag[j].nvecg;
 				datos = malloc(tamanio * sizeof(double));
-				for(int k=0; k<tamanio;k++){
+				for(k=0; k<tamanio;k++){
 					datos[k]=mcam[k][i];
 				} 
 				ordenar_vector(datos,tamanio);
@@ -214,7 +200,9 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 					info_cam[i].mmin= mediana;
 					info_cam[i].gmin= j;
 				}
-				free(datos);
+			
+			free(datos);
+				
 			}
 		}
 	}
@@ -237,8 +225,10 @@ void inicializar_centroides(float cent[][NDIM]){
 	int i, j;
 	float rand_val;
 	srand (147);
+
 	for (i=0; i<ngrupos; i++)
 		for (j=0; j<NDIM/2; j++){
+
 			rand_val = ((rand() % 10000) / 10000.0)*2-1;
 			cent[i][j] = rand_val;
 			cent[i][j+(NDIM/2)] = cent[i][j];
