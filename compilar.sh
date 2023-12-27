@@ -1,2 +1,2 @@
-gcc -O2 -o grupopal_s grupopal_s.c fun_s.c -lm
+gcc -O2 -fopenmp -o grupopal_p grupopal_p.c fun_p.c -lm
 
