@@ -74,15 +74,16 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		double b[ngrupos];
 		double s[ngrupos];
 		double CVI=0.0;
-		
+		int i, j, k;
 
 		//Distancia intra-cluster
-		for(int i=0;i<ngrupos;i++){
+		#pragma omp parallel for private(i,j, k) schedule(static)
+		for(i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int tamanio=listag[i].nvecg;
 			if(tamanio>1){
-				for(int j=0;j<tamanio;j++){
-					for(int k=j+1;k<tamanio;k++){
+				for(j=0;j<tamanio;j++){
+					for( k=j+1;k<tamanio;k++){
 						//printf("Distancia ANTES= [%f]\n", distancia);
 						//printf("Suma= [%f]\n", gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]));
 						distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
@@ -97,6 +98,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		//	printf("a[%d] = %f \n", i, a[i]);
 		}
 		//Distancia inter-cluster
+		#pragma omp parallel for private(i,j) schedule(static)
 		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int cont=0;
@@ -109,12 +111,12 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			b[i] = distancia/cont;
 			//printf("b[%d] = %f \n", i, b[i]);
 		}
-
+		#pragma omp parallel for private(i) schedule(static)
 		for(int i=0;i<ngrupos;i++){
 			s[i]=(b[i]-a[i])/(fmax(a[i],b[i]));
 			//printf("s[%d] = %f \n", i, s[i]);
 		}
-
+		#pragma omp parallel for private(i) schedule(static)
 		for(int i=0;i<ngrupos;i++){
 			CVI += s[i];
 		}
