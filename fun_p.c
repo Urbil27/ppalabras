@@ -7,6 +7,7 @@
 #include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include<omp.h>
 #include "defineg.h" // definiciones
 
 //Prueba
@@ -20,29 +21,31 @@ double gendist (float *vec1, float *vec2){
 	// PARA COMPLETAR
 	// calcular la distancia euclidea entre dos vectores 
 	double distancia = 0.0;
-	for(int i =0;i<NDIM;i++){
+	int i;
+	//#pragma omp parallel for private(i) schedule(static,4)
+	for(i =0;i<NDIM;i++){
 		//distancia += pow((vec1[i]-vec2[i]),2);
-		distancia += pow((vec1[i]-vec2[i]),2);
+	//	#pragma omp critical
+	//	{
+			distancia += pow((vec1[i]-vec2[i]),2);
+	//	}
+		
 	}
 	return sqrt(distancia);
 }
 
-/***********************************************************************************
- 2 - Funcion para calcular el grupo (cluster) mas cercano (centroide mas cercano)
- Entrada: nvec  numero de vectores, int
-          mvec  vectores, una matriz de tamanno MAXV x NDIM, por referencia
-          cent  centroides, una matriz de tamanno ngrupos x NDIM, por referencia
- Salida:  popul grupo mas cercano a cada elemento, vector de tamanno MAXV, por ref.
-************************************************************************************/
+
 void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 		int *popul){
 	// PARA COMPLETAR
 	// popul: grupo mas cercano a cada elemento
-	for(int i=0;i<nvec;i++){
+	int i, j;
+	#pragma omp parallel for private(i,j) schedule(static, 4)
+	for( i=0;i<nvec;i++){
 		//_Bool primero = 1;
 		double distanciaMinima=DBL_MAX;
 		int grupoCercano;
-		for(int j=0;j<ngrupos;j++){
+		for( j=0;j<ngrupos;j++){
 			double distanciaActual = gendist(mvec[i],cent[j]);
 			if(distanciaMinima>distanciaActual){
 				distanciaMinima = distanciaActual;
