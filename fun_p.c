@@ -1,8 +1,3 @@
-/***************************************************
- AC - OpenMP -- SERIE
- fun_s.c
- rutinas que se utilizan en el modulo grupopal_s.c
-****************************************************/
 #include <math.h>
 #include <float.h>
 #include <stdio.h>
@@ -10,25 +5,16 @@
 #include<omp.h>
 #include "defineg.h" // definiciones
 
-//Prueba
 
-/*******************************************************************
- 1 - Funcion para calcular la distancia euclidea entre dos vectores
- Entrada: 2 elementos con NDIM caracteristicas (por referencia)
- Salida:  distancia (double)
-********************************************************************/
 double gendist (float *vec1, float *vec2){
-	// PARA COMPLETAR
-	// calcular la distancia euclidea entre dos vectores 
+
 	double distancia = 0.0;
 	int i;
-	//#pragma omp parallel for private(i) schedule(static,4)
 	for(i =0;i<NDIM;i++){
-		//distancia += pow((vec1[i]-vec2[i]),2);
-	//	#pragma omp critical
-	//	{
+		#pragma omp critical
+		{
 			distancia += pow((vec1[i]-vec2[i]),2);
-	//	}
+		}
 		
 	}
 	return sqrt(distancia);
@@ -37,12 +23,9 @@ double gendist (float *vec1, float *vec2){
 
 void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 		int *popul){
-	// PARA COMPLETAR
-	// popul: grupo mas cercano a cada elemento
 	int i, j;
 	#pragma omp parallel for private(i,j) schedule(runtime)
 	for( i=0;i<nvec;i++){
-		//_Bool primero = 1;
 		double distanciaMinima=DBL_MAX;
 		int grupoCercano;
 		for( j=0;j<ngrupos;j++){
@@ -50,24 +33,11 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 			if(distanciaMinima>distanciaActual){
 				distanciaMinima = distanciaActual;
 				grupoCercano=j;
-				//primero = 0;
 			}
 		}
 		popul[i]=grupoCercano;
 	}
 }
-
-
-/***************************************************************************************
- 3 - Funcion para calcular la calidad de la particion de clusteres.
-     Ratio entre a y b.
-     El termino a corresponde a la distancia intra-cluster.
-     El termino b corresponde a la distancia inter-cluster.
- Entrada: mvec    vectores, una matriz de tamanno MAXV x NDIM, por referencia
-          listag  vector de ngrupos structs (informacion de grupos generados), por ref.
-          cent    centroides, una matriz de tamanno ngrupos x NDIM, por referencia
- Salida:  valor del CVI (double): calidad/bondad de la particion de clusters
-****************************************************************************************/
 
 double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float cent[][NDIM],
 		float a[]){
@@ -84,10 +54,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			if(tamanio>1){
 				for(j=0;j<tamanio;j++){
 					for( k=j+1;k<tamanio;k++){
-						//printf("Distancia ANTES= [%f]\n", distancia);
-						//printf("Suma= [%f]\n", gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]));
 						distancia += gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]);
-						//printf("Distancia DESPUES= [%f]\n", distancia);
 					}
 				}
 				a[i]=distancia/(tamanio*(tamanio-1)/2);
@@ -95,9 +62,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			else{
 				a[i] = 0.0;
 			}	
-		//	printf("a[%d] = %f \n", i, a[i]);
 		}
-		//Distancia inter-cluster
 		
 		#pragma omp parallel for private(i,j) schedule(runtime) reduction(+: distancia)
 		for(int i=0;i<ngrupos;i++){
@@ -110,12 +75,10 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 				}
 			}
 			b[i] = distancia/cont;
-			//printf("b[%d] = %f \n", i, b[i]);
 		}
 		#pragma omp parallel for private(i) schedule(runtime)
 		for(int i=0;i<ngrupos;i++){
 			s[i]=(b[i]-a[i])/(fmax(a[i],b[i]));
-			//printf("s[%d] = %f \n", i, s[i]);
 		}
 		#pragma omp parallel for private(i) schedule(runtime)
 		for(int i=0;i<ngrupos;i++){
@@ -146,34 +109,9 @@ void ordenar_vector(double *vector,int tamanio){
 	}
 }
 
-
-/*
-//Algoritmo que ordena un vector
-void ordenar_vector(double vector[], int tamanio) {
-    for(int i = 0; i < tamanio-1; i++) {
-        for(int j = 0; j < tamanio-i-1; j++) {
-            if(vector[j] > vector[j+1]) {
-                // Intercambiar arr[j] y arr[j+1]
-                double temp = vector[j];
-                vector[j] = vector[j+1];
-                vector[j+1] = temp;
-            }
-        }
-    }
-}
-*/
-/********************************************************************************************
- 4 - Funcion para relizar el analisis de campos UNESCO
- Entrada:  listag   vector de ngrupos structs (informacion de grupos generados), por ref.
-           mcam     campos, una matriz de tamaño MAXV x NCAM, por referencia
- Salida:   info_cam vector de NCAM structs (informacion del analisis realizado), por ref.
-*****************************************************************************************/
 void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 		struct analisis *info_cam){
-	// PARA COMPLETAR
-	// Realizar el analisis de campos UNESCO en los grupos:
-	//    mediana maxima y el grupo en el que se da este maximo (para cada campo)
-	//    mediana minima y su grupo en el que se da este minimo (para cada campo)
+
 	double* datos;
 	int i,j,k;
 	#pragma omp parallel for private(i,j,k, datos) schedule(static)
@@ -207,15 +145,6 @@ void analisis_campos(struct lista_grupos *listag, float mcam[][NCAM],
 		}
 	}
 }
-
-
-
-/********************************************************************************************
- 4 - Funcion para relizar el analisis de campos UNESCO
- Entrada:  listag   vector de ngrupos structs (informacion de grupos generados), por ref.
-           mcam     campos, una matriz de tamaño MAXV x NCAM, por referencia
- Salida:   info_cam vector de NCAM structs (informacion del analisis realizado), por ref.
-*****************************************************************************************/
 
 
 /*************************************
