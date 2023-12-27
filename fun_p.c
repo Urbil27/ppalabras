@@ -118,7 +118,10 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		}
 		#pragma omp parallel for private(i) schedule(static)
 		for(int i=0;i<ngrupos;i++){
-			CVI += s[i];
+			#pragma omp critical
+			{
+				CVI += s[i];
+			}
 		}
 		printf("CVI/ngrupos: %f \n", CVI/ngrupos);
 		return CVI/ngrupos;
