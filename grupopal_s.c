@@ -23,7 +23,7 @@ int ngrupos = 35;
 // programa principal
 // ==================
 int main (int argc, char *argv[]) {
-	double   a[MAX_GRUPOS]; // densidad de cada cluster
+	float   a[MAX_GRUPOS]; // densidad de cada cluster
 	int     popul[MAXV]; // grupo de cada vector
 	float   cent[MAX_GRUPOS][NDIM]; // centroides
 	int     i, j, nvec, grupo, num, ind;

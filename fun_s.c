@@ -67,27 +67,18 @@ void grupo_cercano (int nvec, float mvec[][NDIM], float cent[][NDIM],
 ****************************************************************************************/
 
 double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float cent[][NDIM],
-		double a[]){
+		float a[]){
 		double b[ngrupos];
 		double s[ngrupos];
 		double CVI=0.0;
-		/*
-		//Distancia intra-cluster
-		for(int i=0;i<ngrupos;i++){
-			a[i]=0.0;
-			for(int j=0;j<listag[i].nvecg;j++){
-				a[i] += gendist(mvec[listag[i].vecg[j]],cent[i]);
-			}
-			a[i]=a[i]/listag[i].nvecg;
-		}
-		*/
+		
 
 		//Distancia intra-cluster
 		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int tamanio=listag[i].nvecg;
 			if(tamanio>1){
-				for(int j=0;j<tamanio-1;j++){
+				for(int j=0;j<tamanio;j++){
 					for(int k=j+1;k<tamanio;k++){
 						//printf("Distancia ANTES= [%f]\n", distancia);
 						//printf("Suma= [%f]\n", gendist(mvec[listag[i].vecg[j]],mvec[listag[i].vecg[k]]));
@@ -100,17 +91,15 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			else{
 				a[i] = 0.0;
 			}	
-			printf("a[%d] = %f \n", i, a[i]);
+		//	printf("a[%d] = %f \n", i, a[i]);
 		}
-
-
 		//Distancia inter-cluster
 		for(int i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int cont=0;
 			for(int j=0;j<ngrupos;j++){
 				if(i != j){
-					distancia = gendist(cent[i],cent[j]);
+					distancia += gendist(cent[i],cent[j]);
 					cont++;
 				}
 			}
@@ -118,21 +107,6 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 			//printf("b[%d] = %f \n", i, b[i]);
 		}
 
-
-
-		/*
-		for(int i=0;i<ngrupos;i++){
-			double distancia=0.0;
-			for(int j=0;j<i;j++){
-				distancia += gendist(cent[i],cent[j]);
-			}
-			for(int k=i+1;k<ngrupos;k++){
-				distancia += gendist(cent[i],cent[k]);
-			}
-			b[i] = distancia/ngrupos;
-			printf("b[%d] = %f \n", i, b[i]);
-		}
-		*/
 		for(int i=0;i<ngrupos;i++){
 			s[i]=(b[i]-a[i])/(fmax(a[i],b[i]));
 			//printf("s[%d] = %f \n", i, s[i]);
@@ -141,6 +115,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		for(int i=0;i<ngrupos;i++){
 			CVI += s[i];
 		}
+		printf("CVI/ngrupos: %f \n", CVI/ngrupos);
 		return CVI/ngrupos;
     //float b[ngrupos];
 
