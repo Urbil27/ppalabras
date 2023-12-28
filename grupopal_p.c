@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <omp.h>
 #include "defineg.h"
 #include "fun.h"
 
@@ -26,11 +27,13 @@ int main (int argc, char *argv[]) {
 	float   a[MAX_GRUPOS]; // densidad de cada cluster
 	int     popul[MAXV]; // grupo de cada vector
 	float   cent[MAX_GRUPOS][NDIM]; // centroides
-	int     i, j, nvec, grupo, num, ind;
+	int     i, j, nvec, grupo, num, ind,numh;
 	int     fin = 0, num_ite = 0;
 	int     convergencia_cont;
 	double  sil, sil_old, diff;
-
+ 	printf("\n Inserte el numero de hilos ------>");
+  	scanf("%d",&numh);
+  	omp_set_num_threads(numh);
 	FILE   *fd;
 	struct timespec t1, t2, t11, t12, t17, t20, t21;
 	double texe, t_lec, t_clust, t_camp, t_escri;
