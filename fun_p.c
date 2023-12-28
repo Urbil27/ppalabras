@@ -10,8 +10,9 @@ double gendist (float *vec1, float *vec2){
 
 	double distancia = 0.0;
 	int i;
+	#pragma omp parallel for private(i) reduction(+: distancia) schedule(runtime)
 	for(i =0;i<NDIM;i++){
-		#pragma omp critical
+		//#pragma omp critical
 		{
 			distancia += pow((vec1[i]-vec2[i]),2);
 		}
@@ -87,7 +88,6 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 				CVI += s[i];
 			}
 		}
-		printf("CVI/ngrupos: %f \n", CVI/ngrupos);
 		return CVI/ngrupos;
 }
 

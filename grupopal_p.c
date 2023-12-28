@@ -1,5 +1,5 @@
 /****************************************************************************************
-    grupopal_s   SERIE
+    grupopal_p   PARALELO
 
     Entrada: vecpal.dat    fichero con las representaciones vectoriales de palabras
              campos.dat    fichero con la carcania de cada palabra a cada campo UNESCO
