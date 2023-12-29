@@ -44,7 +44,7 @@ int main (int argc, char *argv[]) {
 	}
 
 	setbuf(stdout, NULL);
-	printf ("\n*** Ejecucion serie ***\n\n");
+	printf ("\n*** Ejecucion en paralelo ***\n\n");
 	clock_gettime (CLOCK_REALTIME, &t1);
 
 	// lectura de datos (palabras): mvec[i][j]
