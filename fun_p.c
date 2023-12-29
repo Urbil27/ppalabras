@@ -10,7 +10,7 @@ double gendist (float *vec1, float *vec2){
 
 	double distancia = 0.0;
 	int i;
-	#pragma omp parallel for private(i) reduction(+: distancia) schedule(runtime)
+	//#pragma omp parallel for private(i) reduction(+: distancia) schedule(runtime)
 	for(i =0;i<NDIM;i++){
 		//#pragma omp critical
 		{
@@ -48,7 +48,7 @@ double silhouette_simple(float mvec[][NDIM], struct lista_grupos *listag, float 
 		int i, j, k;
 
 		//Distancia intra-cluster
-		#pragma omp parallel for private(i,j, k) schedule(runtime) reduction(+: distancia)
+		#pragma omp parallel for private(i,j, k) schedule(runtime)
 		for(i=0;i<ngrupos;i++){
 			double distancia=0.0;
 			int tamanio=listag[i].nvecg;
