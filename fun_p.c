@@ -7,12 +7,9 @@
 
 
 double gendist (float *vec1, float *vec2){
-
 	double distancia = 0.0;
 	int i;
-	//#pragma omp parallel for private(i) reduction(+: distancia) schedule(runtime)
 	for(i =0;i<NDIM;i++){
-		//#pragma omp critical
 		{
 			distancia += pow((vec1[i]-vec2[i]),2);
 		}
